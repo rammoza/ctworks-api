@@ -58,12 +58,12 @@ app.get('/teams', async (req, res) => {
 
 app.post('/teams', async (req, res) => {
   try {
-    const { id, customerId, name, createdAt } = req.body;
+    const { id, customerId, customerName, name, createdAt } = req.body;
     await pool.query(
-      `INSERT INTO teams (id, customer_id, name, created_at)
-       VALUES ($1,$2,$3,$4)
-       ON CONFLICT (id) DO UPDATE SET name=$3`,
-      [id, customerId, name, createdAt || new Date().toISOString()]
+      `INSERT INTO teams (id, customer_id, customer_name, name, created_at)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (id) DO UPDATE SET name=$4, customer_name=$3`,
+      [id, customerId, customerName||'', name, createdAt || new Date().toISOString()]
     );
     res.json({ ok: true });
   } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
